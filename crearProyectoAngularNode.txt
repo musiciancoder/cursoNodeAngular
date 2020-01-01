@@ -1,0 +1,6 @@
+1.En una carpeta nueva nueva (dentro de cygwin si queremos usarlo), inicializar el proyecto con npm init. Esto creará el package json.
+2.Instalar las dependencias con npm install nombrepaquete --save
+3.Abrir una base de datos con mongo.
+4.conectar a la base de datos con mongoose en index.js y agregar "start":"nodemon index.js" en el package json
+5.inicializar el servidor, ir a la carpeta del proyecto y partir el proyecto con npm start
+6. Crear las carpetas de modelo vista y controlador y la carpeta de routing
