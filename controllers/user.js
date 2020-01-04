@@ -1,8 +1,10 @@
 'use strict'
-
+var fs = require('fs');//para trabajar con  ficheros en el servidor
+var path = require('path'); //para trabajar con rutas de archivos en el servidor
 var bcrypt = require('bcrypt-nodejs'); //bcrypt libreria para encriptar, previamente instalada 
 var User = require('../models/user');//importamos el modelo
 var jwt = require('../services/jwt');  //importamos fichero de creacion de tokens. Con este codigo en Node permite importar el archivo y simultaneamente "instanciarlo" como si el archivo fuera una clase, por lo que se tienen acceso a todas las funciones y campos
+
 
 function pruebas(req, res){ //request lo que recibe en la peticion y res es la respuesta
 	res.status(200).send({
@@ -33,7 +35,7 @@ function saveUser(req, res){ //funcion para guardar un usuario nuevo
 			if(user.name !=null && user.surname !=null && user.email !=null){
 
 				//que guarde el usuario si los campos estan llenados correctmente
-			user.save((err, userStored) => {
+			user.save((err, userStored) => {//metodo de nojs para insertar en mongoDB
 				if(err){
 					res.status(500).send({message:'Error al guardar el usuario'});
 				}else{
@@ -50,7 +52,7 @@ function saveUser(req, res){ //funcion para guardar un usuario nuevo
 			}); //cierre de user.save
 
 			}else{
-				res.status(200).send.status(500).send({message:'Rellena todos los campos'});
+				res.status(200).send({message:'Rellena todos los campos'});
 //status(200) cuando faltan por rellenar datos, status(400) cuando no existe un regustro, status(500) algun error en servidor
 			}
 		
@@ -104,8 +106,85 @@ function loginUser(req, res){
 
 }
 
+function updateUser(req, res){ //para actualizar el usuario
+	var userId = req.params.id; //extraemos el id de la url
+	var update = req.body; //extraemos los datos del body de la peticion
+
+	User.findByIdAndUpdate(userId, update, (err, userUpdated) => {
+		if(err){
+			res.status(500).send({message: 'Error al actualizar el usuario'});//error de servidor
+		}else{
+			if(!userUpdated){
+				res.status(404).send({message: 'No se ha podido actualizar el usuario'}); //error en la peticion porque no existe userUpdated
+			}else{
+			res.status(200).send({user: userUpdated}); //pasamos el userUpdated a user
+
+			}
+		}
+
+	});
+
+}
+
+//fn para subir avatar de usuario
+function uploadImage(req,res){
+	var userId = req.params.id;//extraemos id de la url
+	var file_name = 'No subido...';
+
+	if(req.files){ //si existe la imagen en la request
+		var file_path = req.files.image.path;
+		var file_split = file_path.split('\\'); //cortar la ruta por las barras
+		var file_name = file_split[2];
+
+
+		var ext_split = file_name.split('\.');
+		var file_ext = ext_split[1]; //extension del fichero
+
+
+if(file_ext == 'png' || file_ext == 'jpg' || file_ext == 'gif'  ){
+
+User.findByIdAndUpdate(userId, {image: file_name}, (err, userUpdated)=>{//se actualiza la propiedad imagen
+	if(!userUpdated){
+	res.status(404).send({message: 'No se ha podido actualizar el usuario'}); //error en la peticion porque no existe userUpdated
+	}else{
+			res.status(200).send({user: userUpdated}); //pasamos el userUpdated a user
+
+			}
+}); 
+
+}else{
+	res.status(200).send({message: 'Extension de archivo no válida'});
+}
+
+		
+	}else{
+		res.status(200).send({message: 'No has subido ninguna imagen aún'});
+	}
+}
+
+//metodo para sacar un fichero del servidor (para mostrar una imagen, por ejemplo)
+function getImageFile(req,res){
+	var imageFile = req.params.imageFile; //extraemos el nombre de archivo de imagen de url
+
+	var path_file = './uploads/users/'+imageFile;
+
+	fs.exists(path_file, function(exists){
+		if(exists){
+			res.sendFile(path.resolve(path_file));
+
+		}else{
+			res.status(200).send({message: 'No existe la imagen'});
+		}
+
+	});
+
+}
+
 module.exports = {
   pruebas,
   saveUser,
-  loginUser
+  loginUser,
+  updateUser,
+  uploadImage,
+  getImageFile
 };
