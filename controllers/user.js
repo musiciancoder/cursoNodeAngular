@@ -162,7 +162,7 @@ User.findByIdAndUpdate(userId, {image: file_name}, (err, userUpdated)=>{//se act
 	}
 }
 
-//metodo para sacar un fichero del servidor (para mostrar una imagen, por ejemplo)
+//metodo para obtener un fichero del servidor (para mostrar una imagen, por ejemplo)
 function getImageFile(req,res){
 	var imageFile = req.params.imageFile; //extraemos el nombre de archivo de imagen de url
 
@@ -178,7 +178,12 @@ function getImageFile(req,res){
 
 	});
 
+
 }
+
+
+
+
 
 module.exports = {
   pruebas,
