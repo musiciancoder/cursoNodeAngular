@@ -147,7 +147,7 @@ User.findByIdAndUpdate(userId, {image: file_name}, (err, userUpdated)=>{//se act
 	if(!userUpdated){
 	res.status(404).send({message: 'No se ha podido actualizar el usuario'}); //error en la peticion porque no existe userUpdated
 	}else{
-			res.status(200).send({user: userUpdated}); //pasamos el userUpdated a user
+			res.status(200).send({image: file_name, user: userUpdated}); //pasamos el userUpdated a user
 
 			}
 }); 

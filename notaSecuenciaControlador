@@ -1,0 +1,6 @@
+0.Crear la ruta en directorio routes con api.get('/song', md_auth.ensureAuth, SongController.getSong);
+1. Exportar en app.js las rutas individuales desde el fichero routes y crear las ruta bases
+2. Probar el controlador, por ejemplo con getSong, con el codigo function  getSong(req,res) {
+                                                                     res.status(200).send({message: 'Controlador canción'});
+                                                                 }
+3.Crear metodo save en el controlador y probarlo en postman. Recordar que las autorizaciones van en headers y las propiedades del modelo por body (hay que seleccionar la opcion x-www-for-urlencoded

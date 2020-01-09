@@ -8,10 +8,15 @@ var md_auth = require('../middlewares/authenticated');//este es el middleware, q
 
 var multipart = require('connect-multiparty'); //para subir archivos o ficheros por http
 
-var md_upload = multipart({ uploadDir: './uploads/album'}); //uploadDir es
+var md_upload = multipart({ uploadDir: './uploads/albums'}); //uploadDir es
 
 
 api.get('/album/:id', md_auth.ensureAuth, AlbumController.getAlbum); //ruta para obtener un album previamente guardado
 api.post('/album', md_auth.ensureAuth, AlbumController.saveAlbum); //ruta para guardar album en la BD
+api.get('/albums/:artist?', md_auth.ensureAuth, AlbumController.getAlbums);
+api.put('/album/:id', md_auth.ensureAuth, AlbumController.updateAlbum);
+api.delete('/album/:id', md_auth.ensureAuth, AlbumController.deleteAlbum);
+api.post('/upload-image-album/:id', [md_auth.ensureAuth, md_upload], AlbumController.uploadImage);
+api.get('/get-image-album/:imageFile', AlbumController.getImageFile);
 
 module.exports = api;
